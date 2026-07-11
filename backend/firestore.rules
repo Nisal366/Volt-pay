@@ -1,0 +1,62 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(ownerUid) {
+      return signedIn() && request.auth.uid == ownerUid;
+    }
+
+    function isAdmin() {
+      return signedIn() && request.auth.token.admin == true;
+    }
+
+    match /users/{userId} {
+      allow read, create, update: if signedIn() && request.auth.uid == userId;
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /meters/{meterId} {
+      allow create: if signedIn() && request.auth.uid == request.resource.data.ownerUid;
+      allow read, update, delete: if isOwner(resource.data.ownerUid) || isAdmin();
+    }
+
+    match /usageRecords/{recordId} {
+      allow read: if isOwner(resource.data.ownerUid) || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /bills/{billId} {
+      allow read: if isOwner(resource.data.ownerUid) || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /payments/{paymentId} {
+      allow read: if isOwner(resource.data.ownerUid) || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /reports/{reportId} {
+      allow create: if signedIn() && request.auth.uid == request.resource.data.ownerUid;
+      allow read, update: if isOwner(resource.data.ownerUid) || isAdmin();
+    }
+
+    match /news/{newsId} {
+      allow read: if resource.data.isPublished == true || isAdmin();
+      allow write: if isAdmin();
+    }
+
+    match /offices/{officeId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /contactMessages/{messageId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}

@@ -1,0 +1,156 @@
+{
+  "info": {
+    "name": "VOLTPAY Backend API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api"
+    },
+    {
+      "key": "firebase_id_token",
+      "value": "PASTE_TOKEN_HERE"
+    },
+    {
+      "key": "meter_id",
+      "value": ""
+    },
+    {
+      "key": "bill_id",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "url": "{{base_url}}/health"
+      }
+    },
+    {
+      "name": "Create/Update Profile",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{firebase_id_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"firstName\": \"Test\",\n  \"lastName\": \"User\",\n  \"nic\": \"200012345678\",\n  \"mobile\": \"0712345678\",\n  \"email\": \"test@example.com\"\n}"
+        },
+        "url": "{{base_url}}/auth/profile"
+      }
+    },
+    {
+      "name": "Add Meter",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{firebase_id_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"accountName\": \"Home Meter\",\n  \"accountNumber\": \"ACC123456\",\n  \"premisesId\": \"PREM001\",\n  \"meterNumber\": \"MTR001\",\n  \"area\": \"Colombo\"\n}"
+        },
+        "url": "{{base_url}}/meters"
+      }
+    },
+    {
+      "name": "List Meters",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{firebase_id_token}}"
+          }
+        ],
+        "url": "{{base_url}}/meters"
+      }
+    },
+    {
+      "name": "Connect Meter",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{firebase_id_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"method\": \"wifi\",\n  \"deviceId\": \"DEVICE-001\",\n  \"wifiSsid\": \"Home WiFi\"\n}"
+        },
+        "url": "{{base_url}}/meters/{{meter_id}}/connect"
+      }
+    },
+    {
+      "name": "Seed Demo Usage",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{firebase_id_token}}"
+          }
+        ],
+        "url": "{{base_url}}/usage/{{meter_id}}/demo-seed"
+      }
+    },
+    {
+      "name": "List Bills",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{firebase_id_token}}"
+          }
+        ],
+        "url": "{{base_url}}/bills"
+      }
+    },
+    {
+      "name": "Mock Payment",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{firebase_id_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"billId\": \"{{bill_id}}\",\n  \"amount\": 2500,\n  \"method\": \"card\"\n}"
+        },
+        "url": "{{base_url}}/payments/mock"
+      }
+    }
+  ]
+}
